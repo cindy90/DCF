@@ -5,7 +5,23 @@
 **Version:** 4.7 · Public Edition
 **Build date:** April 2026
 **Compatibility:** Claude Code / Cowork (Anthropic)
+# 3-statements-ultra
 
+> **An institutional-grade financial modeling workflow as an open-source Anthropic Claude Skill — built by a practicing HK IPO cornerstone investor, not an AI engineer.**
+
+[![Format](https://img.shields.io/badge/format-Claude%20Skill-1F4E79)](https://docs.claude.com/en/docs/agents-and-tools/agent-skills)
+[![Version](https://img.shields.io/badge/version-4.7-2E75B6)]()
+[![GAAP](https://img.shields.io/badge/GAAP-CN%20%7C%20IFRS%20%7C%20US-success)]()
+[![Granularity](https://img.shields.io/badge/granularity-Q%20%7C%20H%20%7C%20A-blueviolet)]()
+[![Docs](https://img.shields.io/badge/docs-EN%20%7C%20中文-blue)](README.zh.md)
+
+**Why this exists.** I am an investment director who builds three-statement models, DCFs, and comps every week — for HK IPO cornerstone deals and A-share Pre-IPO investments. The official `financial-analysis:3-statements` Claude Skill produces a model in 20 minutes — but it plugs Cash from the balance sheet residual, hardcodes forecast cells, treats revenue as one line, and ignores CN GAAP entirely. None of those models would pass an IC committee. So I built one that would.
+
+**What you get.** A 9-session, state-persistent workflow that produces full IS / BS / CF + DCF + Comps + Valuation Summary in Excel — formula-only forecasts, 9 mandatory QC gates, native CN GAAP / IFRS / US GAAP support, quarterly granularity. Data sources: Excel, NotebookLM, tushare (A-shares), iFinD (HK IPO), with Yahoo / Sina fallback.
+
+**Quick start.** Install the `.skill` file in Claude Code or Cowork, say `"build a 3-statement model for [ticker]"`, and the skill takes over. See the [Comparison with the official skill](#vs-the-official-financial-analysis3-statements-skill) below to understand the design choices.
+
+---
 ---
 
 ## What This Skill Does
