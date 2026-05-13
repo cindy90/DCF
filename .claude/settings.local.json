@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(del:*)",
+      "Bash(file:*)",
+      "mcp__ide__executeCode",
+      "Bash(dir:*)",
+      "Bash(set PYTHONIOENCODING=utf-8)",
+      "Bash(cmd /c \"set PYTHONIOENCODING=utf-8 && python build_session_a.py\")",
+      "Bash(where:*)",
+      "Bash(xargs basename:*)",
+      "Bash(ls:*)",
+      "Bash(pip show:*)",
+      "Bash(findstr:*)",
+      "Bash(tasklist:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd //c \"taskkill /F /IM EXCEL.EXE\")",
+      "Bash(1 cat _hk_test.txt)",
+      "Bash(1 cat _hk_test2.txt)",
+      "Bash(1 cat _hk_idx_test.txt)"
+    ]
+  }
+}

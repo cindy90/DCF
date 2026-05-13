@@ -1,0 +1,177 @@
+# ═══════════════════════════════════════════════════════════════════
+# DCF Agent — 项目配置模板 (Project Config Template)
+# ═══════════════════════════════════════════════════════════════════
+# 使用说明:
+#   1. 复制本文件到 "DCF agent/<公司名>/" 目录，命名为 project_config.yaml
+#   2. 填写所有 "TODO:" 标记的字段
+#   3. 运行 build 脚本时传入此配置文件路径
+#
+# 符号说明:
+#   - TODO:  必填字段，需根据项目修改
+#   - NOTE:  可选或有默认值，按需修改
+#   - KEEP:  通常不需要修改
+# ═══════════════════════════════════════════════════════════════════
+
+# ── 1. 公司基本信息 ──────────────────────────────────────────────
+identity:
+  company_name_full: "TODO: 公司全称（如：xxx有限公司）"
+  company_name_short: "TODO: 简称"
+  business_description: "TODO: 主营业务一句话描述"
+  accounting_standard: "CN GAAP"           # KEEP: 或 "IFRS"
+  unit: "万元"                              # KEEP: 模型内部单位
+  unit_display: "单位: 万元"                # KEEP
+  currency: "人民币"                        # NOTE: 或 "USD"
+
+# ── 2. 文件路径 ──────────────────────────────────────────────────
+paths:
+  model_path: "TODO: xxx_3statement_model.xlsx"    # 相对于本yaml或绝对路径
+  comps_data_path: "_comps_data.json"              # NOTE: 可比公司数据缓存
+
+# ── 3. 时间区间 ──────────────────────────────────────────────────
+periods:
+  # TODO: 根据实际历史数据年份和预测年份修改
+  hist_years: ["FY2023", "FY2024", "FY2025"]
+  fcst_years: ["FY2026E", "FY2027E", "FY2028E", "FY2029E", "FY2030E"]
+  hist_cols:  ["B", "C", "D"]                      # KEEP: 对应Excel列
+  fcst_cols:  ["E", "F", "G", "H", "I"]            # KEEP
+  data_date: "TODO: 2026-04-03"                     # 数据截止日期
+  fin_period: "TODO: FY2024年报"                    # 最新财务报告期
+
+# ── 4. IS/BS/CF 检查行 ──────────────────────────────────────────
+# NOTE: 通常从 _State sheet 的 KEY_CELLS_* 自动读取。
+#       此处仅作为 fallback 或特殊 override 使用。
+check_rows:
+  is_rev_check_row: null    # null = auto from _State
+  is_ni_check_row: null     # null = auto from _State
+  ni_check_tolerance: 10    # ABS tolerance for NI check
+
+# ── 5. 可比公司分析 (Comps) ──────────────────────────────────────
+comps:
+  # TODO: 核心可比公司股票代码
+  core_peers:
+    - "TODO: 300065.SZ"
+    - "TODO: 300008.SZ"
+  # NOTE: 需排除的异常值公司
+  excluded_tickers:
+    - "TODO: 603268.SH"
+  industry_index: "TODO: 850935.SI"                 # 申万行业指数代码
+  industry_name: "TODO: 航海装备Ⅲ"                 # 申万行业名称
+  pe_filter:
+    min: 0
+    max: 500                                        # KEEP: PE > 500x 视为离群
+  peg_filter:
+    min: 0
+    max: 10                                         # KEEP: PEG > 10x 视为离群
+  tab_color: "00B0F0"                               # KEEP: Comps标签颜色
+  insert_after_sheet: "Scenario"                    # KEEP
+
+# ── 6. DCF 关键单元格映射 ────────────────────────────────────────
+# NOTE: 这些是 DCF sheet 中关键结果所在的单元格地址。
+#       如果 DCF 模板不变，通常不需要修改。
+dcf_cells:
+  wacc: "B21"
+  perpetuity_g: "B41"
+  exit_multiple: "B47"
+  ev_gordon: "B60"
+  ev_exit: "B65"
+  net_debt: "B70"
+  eq_gordon: "B72"
+  eq_exit: "B73"
+  eq_avg: "B74"
+
+# ── 7. IS/BS 锚点行引用 (for Comps Block 3) ────────────────────
+# TODO: 根据实际 IS/BS 行号修改
+anchor_refs:
+  revenue:
+    sheet: "IS"
+    row: 17                                         # TODO: IS中营收所在行
+    hist_col: "D"                                   # 最新历史年列
+    fcst_col: "E"                                   # 第一个预测年列
+  gross_profit:
+    sheet: "IS"
+    row: 27
+  ebit:
+    sheet: "IS"
+    row: 49
+  net_income:
+    sheet: "IS"
+    row: 58
+  equity:
+    sheet: "BS"
+    row: 56
+  total_assets:
+    sheet: "BS"
+    row: 28
+
+# ── 8. 估值汇总 (Valuation Summary) ─────────────────────────────
+valuation:
+  current_round_value: 15.0                         # TODO: 当前轮融资估值(亿元)
+  current_round_label: "Pre-A"                      # TODO: 融资轮次
+  # TODO: 各估值方法权重（合计应=100%）
+  method_weights:
+    dcf_gordon: 0.30
+    dcf_exit: 0.20
+    dcf_avg: 0.00        # 参考行，不纳入加权
+    pe_ttm: 0.10
+    pe_forward: 0.20     # P/2025E
+    ps: 0.10
+    pb: 0.10
+  tab_color: "FF6600"                               # KEEP
+  insert_after_sheet: "Comps"                       # KEEP
+
+# ── 9. Summary 页面内容 ─────────────────────────────────────────
+summary:
+  company_profile:
+    主营业务: "TODO: 水下智能装备及系统"
+    会计准则: "CN GAAP | 单位: 万元 | 年度报告"
+    历史预测: "TODO: FY2023-FY2025 历史 | FY2026E-FY2030E 预测"
+    在手订单: "TODO: 如有在手订单/合同信息"
+  # TODO: 潜在催化剂（3-5条）
+  catalysts:
+    - "TODO: 催化剂1"
+    - "TODO: 催化剂2"
+    - "TODO: 催化剂3"
+  # TODO: 关键风险（3-5条）
+  risks:
+    - "TODO: 风险1"
+    - "TODO: 风险2"
+    - "TODO: 风险3"
+  data_confidence: "MEDIUM"                         # NOTE: HIGH / MEDIUM / LOW
+
+# ── 10. 数据来源台账 (_Registry) ─────────────────────────────────
+# TODO: 每行格式 [数据项, 来源, 原始单位, 模型单位, 置信度, 备注]
+registry_entries:
+  - ["Revenue (Total)", "TODO: 来源", "元", "万元", "HIGH", "TODO: 备注"]
+  - ["Balance Sheet",   "TODO: 来源", "元", "万元", "HIGH", "TODO: 备注"]
+  - ["Cash Flow",       "TODO: 来源", "元", "万元", "HIGH", "TODO: 备注"]
+
+# ── 11. 分析师批注 ───────────────────────────────────────────────
+analyst_notes:
+  # TODO: Comps Block 5 桥接说明段落
+  comps_bridge: |
+    TODO: 分析师对估值方法适用性的说明。
+    例如：公司处于XX阶段，DCF法为主要估值锚，可比法作为市场校验。
+  # TODO: Valuation Summary Block 4 结论段落
+  conclusion: |
+    TODO: 核心结论。
+    ① DCF 均值权益价值约为 xx 亿元；
+    ② 可比法以 P/2025E 权重最高；
+    ③ 当前融资估值 xx 亿元，相对加权综合中值有折价；
+
+# ── 12. 工作表排序 ───────────────────────────────────────────────
+desired_sheet_order:
+  - "Summary"
+  - "Assumptions"
+  - "IS"
+  - "BS"
+  - "CF"
+  - "Returns"
+  - "DCF"
+  - "Sensitivity"
+  - "Scenario"
+  - "Comps"
+  - "Valuation_Summary"
+  - "Cross_Check"
+  - "Raw_Info"
+  - "_Registry"
+  - "_State"

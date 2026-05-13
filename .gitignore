@@ -1,0 +1,33 @@
+# Secrets
+.env
+.env.local
+*.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.venv/
+venv/
+
+# Excel temp / lock
+~$*.xlsx
+~$*.xlsm
+*.tmp
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Build artefacts
+nul
+_dump_sheets.out.txt
+
+# Local backups
+.git.backup_*/
+*.backup_*/
