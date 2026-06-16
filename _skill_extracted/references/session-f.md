@@ -103,6 +103,21 @@ UFCF = NOPAT + D&A + Capex(as signed from CF) − ΔNWC
 
 ---
 
+### BLOCK 2 增强（可选）— Mid-Year Convention 折现开关
+
+默认沿用**期末折现**（R34 = 1,2,3,4,5）。如需 mid-year（现金流年中到账，更贴近实务），加开关单元格：
+
+- **H6 = Mid-Year Toggle**（浅蓝 input；`0` 或留空 = 期末法[默认]，`1` = mid-year），cell comment 注明含义。
+- **R34（折现期 t）改为逐列公式**（覆盖原字面整数，5 列全写，不可残留旧值）：
+  - B34 `=IF($H$6=1,0.5,1)`  C34 `=IF($H$6=1,1.5,2)`  D34 `=IF($H$6=1,2.5,3)`  E34 `=IF($H$6=1,3.5,4)`  F34 `=IF($H$6=1,4.5,5)`
+- **R35 折现因子不变**：`=1/(1+$B$21)^{col}34`（仍引用 R34 期数单元格，Rule Zero 不变）。
+- **终值 PV 指数按方法区分**（关键，勿一刀切）：
+  - **Gordon 永续**（R44）：`=IF(ISNUMBER(B43), B43/(1+$B$21)^IF($H$6=1,4.5,5), "ERR")` —— 永续现金流也按年中，估值点 t=4.5，自洽。
+  - **退出倍数**（R50）：**始终 `=B49/(1+$B$21)^5`，不随 H6 变** —— 退出倍数是第 5 年**年末**一次性交易市值（point-in-time）；若误用 ^4.5 会高估退出法 EV 约 (1+WACC)^0.5−1 ≈ +5.4%。
+- **联动提醒**：H6=1 时，Session G 敏感性/情景表的 `^5` 字面量与 DCF 头条不再对账（其 QC `base=DCF!B60 ±1` 会失败）。**默认 H6=0 可规避**；若要默认 mid-year，须同步改 Session G 的 ^5 或放宽该 QC。
+
+---
+
 ## BLOCK 3 — Terminal Value
 
 ### 3A: Gordon Growth Model
@@ -181,6 +196,39 @@ Columns: 方法 | EV(万元) | 净有息负债(万元) | 权益价值(万元) | 
 
 ---
 
+## BLOCK 7 — Per-Share Intrinsic Value & Implied Upside（每股内含价值，additive；R109–R118）
+
+放在 Block 6 之后（R109 起，不与既有行冲突）。把 EV→权益桥的平均权益换算到**每股**并对比现价。全程公式（Rule Zero）；摊薄股本/汇率/现价为**浅蓝 input**（或链接 Raw_Info），均须 cell comment 注明来源。
+
+| Row | Label | Formula / Input | 说明 |
+|-----|-------|-----------------|------|
+| R109 | `=== PER-SHARE INTRINSIC VALUE ===` | 段标题 | |
+| R113 | Equity Value (avg, 万元, 报告币) | `=B74` | 复用 Block4 平均权益（已含 Net Debt，口径=BS Cash, FY_LAST_HIST） |
+| R114 | Diluted Shares (M, 摊薄股本) | 浅蓝 input 或 `=Raw_Info!{cell}` | **comment 注明来源**（招股书/年报摊薄股数）；Raw_Info 已有则绿字链接 |
+| R115 | FX 报告币→交易币 | 浅蓝 input | **comment 强制**：报告币=交易币时填 1；**港股(如 6871.HK 现价 HK$) 若报告币为 RMB，必须填 RMB→HKD 汇率，不可留 1** |
+| R116 | Per-Share Intrinsic (交易币/股) | `=(B113*10000)*B115/(B114*1000000)` | 报告币万元→元(×10000)→×FX→交易币；÷(M股×1e6)=股 |
+| R117 | Current Price (交易币/股) | 浅蓝 input | comment：行情来源 + 日期 |
+| R118 | Implied Upside/(Downside) | `=B116/B117-1` | FMT_PCT；**仅当 R116 与现价同币种时才有意义**（见 R115） |
+
+> 净现金时 B74 已含负 Net Debt，EV−NetDebt 自洽，无需特判。
+
+## BLOCK 8 — DCF-Internal Scenario Selector（可选；H/I/J/K 列，不占既有 A–G 列）
+
+DCF tab 内做 Bear/Base/Bull 一键切换，使关键驱动整组切换，且**所有受影响单元格仍是公式**（用 INDEX 整合，**禁止散落 IF**）。
+
+- **H4 = Case Selector**（浅蓝 input，整数 `1`=Bear / `2`=Base / `3`=Bull；**默认 2**）。
+- **H5 = Case Name** = `=IF($H$4=1,"Bear",IF($H$4=2,"Base","Bull"))`。
+- **情景值放 I/J/K 列**，与各 driver 行**同排**（I=Bear, J=Base, K=Bull）。driver 行：R6 Rf、R7 ERP、R8 βU、R10 tax、R15 Kd、R41 g、R47 Exit Mult。
+- **J 列(Base) 必须逐行复刻该行"现行实际来源"**（关键，勿一律写 Assumptions）：
+  - 若该行现状是 `=Assumptions!F{n}` 链接 → `J{r}` 用**同一链接**；
+  - 若该行现状是**硬输入**（如本规格的 Rf=0.025/ERP=0.070/βU=1.20/tax/Kd，及 Exit Mult=10）→ `J{r}` **复刻同一数值（浅蓝 input）**；
+  - I/K(Bear/Bull) 为浅蓝 input（或链接 Assumptions 情景行）。
+- **整合**：原 driver 格改为 `B{r}=INDEX(I{r}:K{r},1,$H$4)`，并**清除其浅蓝 FILL_INPUT 填充、字色改黑(FNT_DATA)**（它已是公式不再是输入）；仅 H4 与 I/J/K 保留浅蓝+蓝字。
+- **默认 H4=2 时输出与增强前 byte-identical**（J 列=各行现行来源）。
+- **⚠ 与 Session G 的硬约束**：交付或进入 Session G **前 H4 必须=2(Base)**，并在 `_model_log` 记录。Session G 的 grid 用字面量 WACC/g/m、Scenario Base 列 `=DCF!B72/B73/B74` 直链；H4≠2 时 DCF 头条漂移而 grid 不动 → Session G QC-S2/S3 失败。建议 Session G 加前置断言 `DCF!H4==2 否则 abort/警告`。
+
+> Block 8 是 **DCF tab 内的快速情景切换**（单值组）；**多情景正式分析（全矩阵 + 三情景表）仍由 Session G 承担**，两者不冲突。
+
 ## Key Formula Rules (R12 enforcement)
 
 1. **No hardcoded WACC in formulas.** Rf, ERP, Beta, Kd are allowed as input cells (light-blue fill). WACC itself must be computed `=We×Ke + Wd×Kd×(1-t)`.
@@ -188,6 +236,9 @@ Columns: 方法 | EV(万元) | 净有息负债(万元) | 权益价值(万元) | 
 3. **Sensitivity grid cells are self-contained** — they do not reference the WACC/g input cells in Block 1 (to avoid circular Data Table issues and to ensure each scenario is truly independent).
 4. **Net Debt uses last historical column** — not current-year forecast.
 5. **g < WACC guard** — `IF((WACC−g)>0, formula, "ERR: g≥WACC")` on all Gordon TV cells.
+6. **Mid-year (可选)** — H6=1 时：R34 期数逐列 `=IF($H$6=1,0.5,1)`…；Gordon 终值 PV 用 `^IF($H$6=1,4.5,5)`；**退出倍数终值 PV 始终 `^5`**（年末交易市值，不随 H6 变）；R35 仍引用 R34 期数单元格。
+7. **Scenario selector 用 INDEX，禁散落 IF** — driver 格 `=INDEX(I{r}:K{r},1,$H$4)`；J(Base) 列逐行复刻现行来源（链接行用链接、硬输入行复刻值）；整合格转公式后清除浅蓝填充改黑字；**默认 H4=2，进 Session G 前 H4 必须=2**。
+8. **每股链** — 仅摊薄股本/汇率/现价可为硬输入（浅蓝 + comment）；每股 `=(权益万元*10000)*FX/(摊薄M股*1e6)`，上行 `=每股/现价-1`，务必同币种。
 
 ---
 
@@ -201,7 +252,12 @@ DCF_KEY_CELLS: {"WACC_cell": "DCF!B21", "Ke_cell": "DCF!B12", "EV_Gordon_cell": 
                 "Equity_Exit_cell": "DCF!B73", "AvgEquity_cell": "DCF!B74",
                 "UFCF_row": 33, "TV_Gordon_row": 43, "TV_Exit_row": 49,
                 "NetDebt_row": 70, "Rf_cell": "DCF!B6", "ERP_cell": "DCF!B7",
-                "BetaU_cell": "DCF!B8", "g_cell": "DCF!B41", "ExitMult_cell": "DCF!B47"}
+                "BetaU_cell": "DCF!B8", "g_cell": "DCF!B41", "ExitMult_cell": "DCF!B47",
+                "CaseSelector_cell": "DCF!H4", "CaseName_cell": "DCF!H5", "MidYearToggle_cell": "DCF!H6",
+                "DilutedShares_cell": "DCF!B114", "FXrate_cell": "DCF!B115", "PerShare_cell": "DCF!B116",
+                "CurrentPrice_cell": "DCF!B117", "ImpliedUpside_cell": "DCF!B118"}
+
+（前缀约定：本规格 DCF_KEY_CELLS 统一带 `DCF!` 前缀；实现脚本如写裸地址需全表统一其一。新增键为 additive，未改动既有 WACC_cell/g_cell/ExitMult_cell/NetDebt_row/AvgEquity_cell 等 Session G 引用契约；既有 TV% 单元格 B45/B51 为既有产物、非本次新增。）
 ```
 
 ---
@@ -237,3 +293,6 @@ DCF_KEY_CELLS: {"WACC_cell": "DCF!B21", "Ke_cell": "DCF!B12", "EV_Gordon_cell": 
 | 4 | Sensitivity cells reference B21/B41 (not hardcoded) | Each sensitivity cell must embed the scenario WACC/g as literal numbers |
 | 5 | TV% > 95% | Check if forecast UFCF is near-zero — may need to extend projection period |
 | 6 | Equity Value < 0 | Net Debt exceeds EV — verify IBD vs Cash balance signs |
+| 7 | mid-year 把退出倍数终值也用 ^4.5 | 退出倍数 TV 始终 `^5`(年末市值)；mid-year 的 4.5 只用于 Gordon 永续 |
+| 8 | selector 用散落 IF / J(Base) 列一律写 Assumptions | 用 `=INDEX(I:K,1,$H$4)`；J 逐行复刻现行来源；进 Session G 前 H4=2 |
+| 9 | 每股用基本股本、或 RMB/股 直接比港元现价 | 用摊薄股本；先用 FX 把每股换到现价币种再算上行% |
