@@ -3,12 +3,14 @@ shared/ifind_client.py
 ====================================================================
 同花顺 iFinD QuantAPI 封装 —— 港股首发上市 / 行情 / 财务 / 宏观
 
+底层（SDK 延迟导入 / 登录会话缓存 / .env 加载 / 返回→DataFrame 解析）已抽到
+共享模块 `ifind_core`（与 market-dashboard/ifind.py 复用同一份，去重）；本文件
+只保留高层查询 API 与港股便捷封装。
+
 依赖
 ----
 1. 官方 SDK `iFinDPy`（需登录 https://quantapi.10jqka.com.cn 下载安装）
-2. 凭证写入项目根目录 `.env`：
-       IFIND_USERNAME=...
-       IFIND_PASSWORD=...
+2. 凭证写入项目根目录 `.env`：IFIND_USERNAME=... / IFIND_PASSWORD=...
 
 使用
 ----
@@ -16,112 +18,76 @@ shared/ifind_client.py
         login, hk_ipo_calendar, hk_ipo_basics,
         hk_history_prices, hk_financials, edb_query,
     )
-
     df = hk_ipo_calendar('2024-01-01', '2026-05-07')
 
 注意
 ----
-所有 iFinD 指标 ID（`ths_xxx_xxx`）与数据池名称（`newshare` 等）
-请以 QuantAPI 客户端的「数据浏览器」为准；本文件中的常量为常见用法，
-首次拉取建议先 print(df) 抽样校验字段名。
+所有 iFinD 指标 ID（`ths_xxx_xxx`）与数据池名称（`newshare` 等）请以 QuantAPI
+「数据浏览器」为准；首次拉取建议先 print(df) 抽样校验字段名。
+公共错误契约：登录/查询失败抛 RuntimeError（与历史一致）。
 ====================================================================
 """
 from __future__ import annotations
 
-import os
 import time
 import logging
 from pathlib import Path
 from functools import wraps
-from typing import Iterable, Sequence
+from typing import Iterable
 
 import pandas as pd
 
+# 共享底层（与 market-dashboard/ifind.py 复用同一份 ifind_core）
+from .ifind_core import (
+    IFindNotConfigured,
+    IFindError,
+    is_configured,           # noqa: F401  便捷重导出
+    load_env,
+    ensure_login as _core_login,
+    logout as _core_logout,
+    to_df as _core_to_df,
+)
+
 logger = logging.getLogger(__name__)
 
-# --------------------------------------------------------------------
-# 1. .env 加载（避免硬依赖 python-dotenv）
-# --------------------------------------------------------------------
-def _load_env(env_path: Path | None = None) -> None:
-    if env_path is None:
-        env_path = Path(__file__).resolve().parent.parent / ".env"
-    if not env_path.exists():
-        return
-    for line in env_path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, _, v = line.partition("=")
-        k, v = k.strip(), v.strip().strip('"').strip("'")
-        if k and k not in os.environ:
-            os.environ[k] = v
-
-_load_env()
-
-# --------------------------------------------------------------------
-# 2. SDK 导入（延迟报错，便于纯解析模式 import 本模块）
-# --------------------------------------------------------------------
-try:
-    from iFinDPy import (
-        THS_iFinDLogin, THS_iFinDLogout,
-        THS_BasicData, THS_HistoryQuotes, THS_RealtimeQuotes,
-        THS_DateSerial, THS_DataPool, THS_EDBQuery,
-    )
-    _SDK_OK = True
-    _SDK_ERR: Exception | None = None
-except Exception as e:  # ImportError 或 DLL 加载失败
-    _SDK_OK = False
-    _SDK_ERR = e
-
-def _require_sdk() -> None:
-    if not _SDK_OK:
-        raise ImportError(
-            "iFinDPy 未安装或加载失败。\n"
-            "请到 QuantAPI 官网下载客户端: "
-            "https://quantapi.10jqka.com.cn/gws/static/static/ds_web/quantapi-web/\n"
-            f"原始错误: {_SDK_ERR}"
-        )
+# 加载项目根 .env（不覆盖已有环境变量）
+load_env(str(Path(__file__).resolve().parent.parent / ".env"))
 
 
 # --------------------------------------------------------------------
-# 3. 登录 / 登出 / 装饰器
+# 登录 / 登出（保持旧契约：失败抛 RuntimeError）
 # --------------------------------------------------------------------
-_LOGGED_IN = False
-
 def login() -> None:
-    """读取 .env 中的 IFIND_USERNAME/PASSWORD 登录。重复调用安全。"""
-    global _LOGGED_IN
-    if _LOGGED_IN:
-        return
-    _require_sdk()
-    user = os.environ.get("IFIND_USERNAME", "").strip()
-    pwd = os.environ.get("IFIND_PASSWORD", "").strip()
-    if not user or not pwd:
-        raise RuntimeError(
-            "IFIND_USERNAME / IFIND_PASSWORD 未配置。请填入 .env"
-        )
-    rc = THS_iFinDLogin(user, pwd)
-    # 0 = 成功, -201 = 已登录（不同 SDK 版本码值略有差异，做宽松判定）
-    if rc not in (0, -201):
-        raise RuntimeError(f"iFinD 登录失败 rc={rc} user={user}")
-    _LOGGED_IN = True
-    logger.info("iFinD 登录成功 user=%s", user)
+    """读取 .env 中 IFIND_USERNAME/PASSWORD 登录。重复调用安全。"""
+    try:
+        _core_login()
+        logger.info("iFinD 登录成功")
+    except IFindNotConfigured:
+        raise RuntimeError("IFIND_USERNAME / IFIND_PASSWORD 未配置。请填入 .env")
+    except IFindError as e:
+        raise RuntimeError(str(e))
 
 
 def logout() -> None:
-    global _LOGGED_IN
-    if _LOGGED_IN and _SDK_OK:
-        THS_iFinDLogout()
-        _LOGGED_IN = False
+    _core_logout()
 
 
-def _ensure_login(fn):
-    @wraps(fn)
-    def wrapper(*a, **kw):
-        if not _LOGGED_IN:
-            login()
-        return fn(*a, **kw)
-    return wrapper
+def _ths():
+    """返回已登录的 iFinDPy 模块；失败抛 RuntimeError（统一契约）。"""
+    try:
+        return _core_login()
+    except IFindNotConfigured:
+        raise RuntimeError("IFIND_USERNAME / IFIND_PASSWORD 未配置。请填入 .env")
+    except IFindError as e:
+        raise RuntimeError(str(e))
+
+
+def _df(rsp) -> pd.DataFrame:
+    """ifind_core.to_df 的薄封装：把 IFindError 翻译成 RuntimeError（保持旧契约）。"""
+    try:
+        return _core_to_df(rsp)
+    except IFindError as e:
+        raise RuntimeError(str(e))
 
 
 def _retry(times: int = 3, sleep: float = 1.0):
@@ -134,39 +100,12 @@ def _retry(times: int = 3, sleep: float = 1.0):
                     return fn(*a, **kw)
                 except Exception as e:
                     last = e
-                    logger.warning("iFinD 调用失败 重试 %d/%d: %s",
-                                   i + 1, times, e)
+                    logger.warning("iFinD 调用失败 重试 %d/%d: %s", i + 1, times, e)
                     time.sleep(sleep * (i + 1))
             assert last is not None
             raise last
         return wrapper
     return deco
-
-
-# --------------------------------------------------------------------
-# 4. 响应统一转 DataFrame
-# --------------------------------------------------------------------
-def _to_df(rsp) -> pd.DataFrame:
-    if rsp is None:
-        raise RuntimeError("iFinD 接口返回 None")
-    if isinstance(rsp, pd.DataFrame):
-        return rsp
-    if isinstance(rsp, dict):
-        err = rsp.get("errorcode", rsp.get("error_code", -1))
-        if err not in (0, "0"):
-            raise RuntimeError(
-                f"iFinD 错误码 {err}: {rsp.get('errmsg') or rsp.get('error_msg')}"
-            )
-        for key in ("data", "tables", "table"):
-            data = rsp.get(key)
-            if isinstance(data, pd.DataFrame):
-                return data
-            if isinstance(data, dict):
-                return pd.DataFrame(data)
-            if isinstance(data, list) and data:
-                return pd.DataFrame(data)
-        return pd.DataFrame()  # 空结果
-    raise RuntimeError(f"无法解析 iFinD 返回: {type(rsp).__name__}")
 
 
 def _join_codes(codes) -> str:
@@ -180,7 +119,6 @@ def _join_codes(codes) -> str:
 # ====================================================================
 # A. 行情数据
 # ====================================================================
-@_ensure_login
 @_retry()
 def history_quotes(codes, indicators: str,
                    begin: str, end: str,
@@ -193,47 +131,47 @@ def history_quotes(codes, indicators: str,
         options    : iFinD 复权/币种串，例：
                      'Interval:D,CPS:00102,baseDate:1900-01-01,Currency:HKD' (前复权)
     """
-    rsp = THS_HistoryQuotes(_join_codes(codes), indicators, options, begin, end)
-    return _to_df(rsp)
+    THS = _ths()
+    rsp = THS.THS_HistoryQuotes(_join_codes(codes), indicators, options, begin, end)
+    return _df(rsp)
 
 
-@_ensure_login
 @_retry()
 def realtime_quotes(codes,
                     indicators: str = "latest;preClose;openPrice;highPrice;lowPrice;volume"
                     ) -> pd.DataFrame:
-    rsp = THS_RealtimeQuotes(_join_codes(codes), indicators)
-    return _to_df(rsp)
+    THS = _ths()
+    rsp = THS.THS_RealtimeQuotes(_join_codes(codes), indicators)
+    return _df(rsp)
 
 
 # ====================================================================
 # B. 基础 / 财务（截面 + 时间序列）
 # ====================================================================
-@_ensure_login
 @_retry()
 def basic_data(codes, indicators: str, params: str = "") -> pd.DataFrame:
     """
     截面基础数据 —— 公司资料、估值快照、IPO 信息、单期财务等。
         params 例: '20251231,100,OC' （报告期/单位/合并口径，按指标含义）
     """
-    rsp = THS_BasicData(_join_codes(codes), indicators, params)
-    return _to_df(rsp)
+    THS = _ths()
+    rsp = THS.THS_BasicData(_join_codes(codes), indicators, params)
+    return _df(rsp)
 
 
-@_ensure_login
 @_retry()
 def date_serial(codes, indicators: str,
                 options: str = "",
                 begin: str = "", end: str = "") -> pd.DataFrame:
     """日序列 —— PE/PB 历史、财务时间序列等。"""
-    rsp = THS_DateSerial(_join_codes(codes), indicators, options, begin, end)
-    return _to_df(rsp)
+    THS = _ths()
+    rsp = THS.THS_DateSerial(_join_codes(codes), indicators, options, begin, end)
+    return _df(rsp)
 
 
 # ====================================================================
 # C. 数据池（IPO 列表 / 板块成分 / 概念）
 # ====================================================================
-@_ensure_login
 @_retry()
 def data_pool(pool_name: str, params: str, indicators: str) -> pd.DataFrame:
     """
@@ -243,14 +181,14 @@ def data_pool(pool_name: str, params: str, indicators: str) -> pd.DataFrame:
         'index'    —— 指数成分
     具体参数请查 QuantAPI 数据浏览器 → 数据池。
     """
-    rsp = THS_DataPool(pool_name, params, indicators)
-    return _to_df(rsp)
+    THS = _ths()
+    rsp = THS.THS_DataPool(pool_name, params, indicators)
+    return _df(rsp)
 
 
 # ====================================================================
 # D. 宏观 EDB
 # ====================================================================
-@_ensure_login
 @_retry()
 def edb_query(indicator_id: str, begin: str, end: str) -> pd.DataFrame:
     """
@@ -258,8 +196,9 @@ def edb_query(indicator_id: str, begin: str, end: str) -> pd.DataFrame:
         indicator_id : EDB 编号（如 'M001620244'），多个用分号
         begin/end    : 'YYYY-MM-DD'
     """
-    rsp = THS_EDBQuery(indicator_id, begin, end)
-    return _to_df(rsp)
+    THS = _ths()
+    rsp = THS.THS_EDBQuery(indicator_id, begin, end)
+    return _df(rsp)
 
 
 # ====================================================================
@@ -367,17 +306,8 @@ def hk_valuation_snapshot(codes, date: str = "") -> pd.DataFrame:
 # 宏观便捷封装：返回常用 EDB ID 字典
 # ====================================================================
 # ⚠️ EDB ID 因数据库更新会变动，请以 QuantAPI「EDB 浏览器」实际为准。
-# 下面为常见示例占位；运行前请自行核对，错误 ID 会返回空表。
 HK_MACRO_EDB = {
-    # 香港本地
-    # "HK_GDP_YOY":     "M00xxxxxx",
-    # "HK_CPI_YOY":     "M00xxxxxx",
-    # "HK_UNEMP_RATE":  "M00xxxxxx",
-    # "HIBOR_3M":       "M00xxxxxx",
-    # 内地（与港股投资逻辑相关）
-    # "CN_GDP_YOY":     "M00xxxxxx",
-    # "CN_CPI_YOY":     "M00xxxxxx",
-    # "CN_M2_YOY":      "M00xxxxxx",
+    # 香港本地 / 内地（占位；运行前请自行核对，错误 ID 会返回空表）
 }
 
 # 走 history_quotes 的宏观/外汇代码
@@ -411,6 +341,8 @@ __all__ = [
     # 宏观
     "hk_macro_quote_history", "HK_MACRO_EDB", "HK_MACRO_QUOTE",
     "HK_SUFFIX",
+    # 自 ifind_core 重导出
+    "is_configured", "IFindNotConfigured", "IFindError",
 ]
 
 
