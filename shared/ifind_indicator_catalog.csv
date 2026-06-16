@@ -1,53 +1,106 @@
-indicator_id,category,market_scope,api_func,params_format,returned_unit,description,verified_example,verified_date,notes
-pe_ttm,valuation,universal,basic_data,"YYYY-MM-DD,100",ratio,市盈率(TTM),"1316.HK→16.06; 603596.SH→22.03",2026-05-08,适用 A股+港股+美股
-ps_ttm,valuation,universal,basic_data,"YYYY-MM-DD,100",ratio,市销率(TTM),"1316.HK→0.36; 603596.SH→2.39",2026-05-08,适用 A股+港股+美股
-pb_latest,valuation,universal,basic_data,"YYYY-MM-DD,100",ratio,市净率(最新),"1316.HK→0.78; 603596.SH→3.57",2026-05-08,替代 pb_mrq / ths_pb_lf
-roe_ttm,profitability,universal,basic_data,"YYYY-MM-DD,100",percent,加权净资产收益率(TTM),"1316.HK→4.83; 603596.SH→16.22",2026-05-08,直接返回百分数
-ev1_to_ebitda,valuation,universal,basic_data,YYYY-MM-DD,ratio,EV/EBITDA(EV1口径),"603596.SH→17.09; 002284.SZ→15.18",2026-05-08,无 unit 后缀; 部分港股 None
-total_shares,share_struct,universal,basic_data,"YYYY-MM-DD,100",股,总股本,"1316.HK→约 25 亿股",2026-05-08,单位元(=股); /1e8 = 亿股
-ths_market_value_stock,valuation,A股,basic_data,"YYYY-MM-DD,100",元,A股总市值,"603596.SH→288.09 亿元",2026-05-08,A股专用; H股用 market_value
-market_value,valuation,港股,basic_data,"YYYY-MM-DD,100",HKD元,港股总市值(原币),"1316.HK→110.83 亿(HKD)",2026-05-08,港股 universal; 折 CNY 需 FX
-ths_market_value_hks,valuation,港股,basic_data,"YYYY-MM-DD,100",HKD元,港股总市值(_hks 后缀),—,2026-05-08,market_value 失败时回退
-ths_np_ttm_stock,profitability,A股,basic_data,空,元,A股归母净利TTM,—,2026-05-08,无 params; 单位元
-ths_np_ttm_hks,profitability,港股,basic_data,空,HKD元,港股归母净利TTM,—,2026-05-08,无 params; 港股原币
-ths_np_atoopc_stock,profitability,A股,basic_data,"YYYYMMDD,OC",元,归母净利(单期),"20251231,OC → FY25 归母",2026-05-08,OC=合并报表; PC=母公司
-ths_close_price,price,universal,basic_data,YYYY-MM-DD,元,日收盘价,—,2026-05-08,—
-latest,price,universal,realtime_quotes,—,元,实时最新价,"通过 realtime_quotes(ticker,'latest')",2026-05-08,字段名作 indicator
-USDCNH.FX,fx,外汇,history_quotes,"begin/end YYYY-MM-DD",汇率,美元离岸人民币,"~7.10",2026-05-08,history_quotes(close); options Currency:original
-USDHKD.FX,fx,外汇,history_quotes,"begin/end YYYY-MM-DD",汇率,美元港币,"~7.78",2026-05-08,USDCNH/USDHKD 推导 HKD→CNY
-HSI.HI,index,港股,history_quotes,"begin/end YYYY-MM-DD",点,恒生指数,—,2026-05-08,benchmark for HK beta
-HSCEI.HI,index,港股,history_quotes,"begin/end YYYY-MM-DD",点,恒生中国企业指数,—,2026-05-08,—
-HSTECH.HI,index,港股,history_quotes,"begin/end YYYY-MM-DD",点,恒生科技,—,2026-05-08,—
-000300.SH,index,A股,history_quotes,"begin/end YYYY-MM-DD",点,沪深300,—,2026-05-08,benchmark for A-share beta regression
-ths_oper_total_rev,financial,通用,basic_data,"YYYYMMDD,100,OC",元,营业总收入(单期),—,2026-05-08,—
-ths_oper_rev,financial,通用,basic_data,"YYYYMMDD,100,OC",元,营业收入(单期),—,2026-05-08,—
-ths_op_profit,financial,通用,basic_data,"YYYYMMDD,100,OC",元,营业利润(单期),—,2026-05-08,—
-ths_total_profit,financial,通用,basic_data,"YYYYMMDD,100,OC",元,利润总额,—,2026-05-08,—
-ths_net_profit,financial,通用,basic_data,"YYYYMMDD,100,OC",元,净利润,—,2026-05-08,—
-ths_np_atoopc,financial,通用,basic_data,"YYYYMMDD,100,OC",元,归母净利,—,2026-05-08,—
-ths_total_assets,financial,通用,basic_data,"YYYYMMDD,100,OC",元,总资产,—,2026-05-08,—
-ths_total_liab,financial,通用,basic_data,"YYYYMMDD,100,OC",元,总负债,—,2026-05-08,—
-ths_total_se,financial,通用,basic_data,"YYYYMMDD,100,OC",元,股东权益合计,—,2026-05-08,—
-ths_se_atoopc,financial,通用,basic_data,"YYYYMMDD,100,OC",元,归属母公司股东权益,—,2026-05-08,—
-ths_cash_eqv_end_period,financial,通用,basic_data,"YYYYMMDD,100,OC",元,期末现金及等价物,—,2026-05-08,—
-ths_oper_cash_flow,financial,通用,basic_data,"YYYYMMDD,100,OC",元,经营活动现金流量净额,—,2026-05-08,—
-ths_invest_cash_flow,financial,通用,basic_data,"YYYYMMDD,100,OC",元,投资活动现金流量净额,—,2026-05-08,—
-ths_finan_cash_flow,financial,通用,basic_data,"YYYYMMDD,100,OC",元,筹资活动现金流量净额,—,2026-05-08,—
-ths_capex,financial,通用,basic_data,"YYYYMMDD,100,OC",元,资本性支出,—,2026-05-08,—
-ths_gross_profit_ttm,profitability,通用,basic_data,空,元,毛利TTM,—,2026-05-08,—
-ths_dividend_yield,valuation,通用,basic_data,"YYYY-MM-DD",percent,股息率,—,2026-05-08,—
-ths_pe_ttm,valuation,通用,basic_data,"YYYY-MM-DD",ratio,市盈率TTM(_ths_前缀版),—,2026-05-08,与 pe_ttm 等价 fallback
-ths_pb_lf,valuation,通用,basic_data,"YYYY-MM-DD",ratio,市净率LF,—,2026-05-08,与 pb_latest 等价 fallback
-ths_ps_ttm,valuation,通用,basic_data,"YYYY-MM-DD",ratio,市销率TTM,—,2026-05-08,与 ps_ttm 等价 fallback
-ths_ev_ebitda,valuation,通用,basic_data,"YYYY-MM-DD",ratio,EV/EBITDA,—,2026-05-08,与 ev1_to_ebitda 等价 fallback
-ths_stock_short_name_stock,meta,通用,basic_data,空,文本,股票简称,—,2026-05-08,—
-ths_ipo_date_stock,meta,通用,basic_data,空,日期,上市日期,—,2026-05-08,—
-ths_ipo_price_hks,ipo,港股,basic_data,空,HKD,港股发行价,—,2026-05-08,—
-ths_ipo_pe_hks,ipo,港股,basic_data,空,ratio,港股发行PE,—,2026-05-08,—
-ths_total_share_after_ipo_hks,ipo,港股,basic_data,空,股,IPO后总股本,—,2026-05-08,—
-ths_ipo_amt_hks,ipo,港股,basic_data,空,HKD元,港股募资总额,—,2026-05-08,—
-ths_subscript_times_hks,ipo,港股,basic_data,空,倍,公开发售认购倍数,—,2026-05-08,—
-ths_intl_subscript_times_hks,ipo,港股,basic_data,空,倍,国际配售认购倍数,—,2026-05-08,—
-ths_listing_recommend_hks,ipo,港股,basic_data,空,文本,保荐人,—,2026-05-08,—
-ths_underwriter_hks,ipo,港股,basic_data,空,文本,承销商/账簿管理人,—,2026-05-08,—
-ths_first_day_close_chg_hks,ipo,港股,basic_data,空,percent,首日涨跌幅,—,2026-05-08,—
+﻿api,indicator,cn_name,param_format,param_note,return_cols,status,sample,note
+THS_DR,p05309,港股基石投资者明细,ttype=1;sdate={start};edate={end};sfzx=1,ttype=1 港股IPO; sdate/edate=YYYYMMDD; sfzx=1 仅最新,f001-f019 共 18 字段 (公司/基石名/认购金额/锁定期等),✓,20220101-20260507 拉到 1613 条,"★关键字段: f003上市日 f004定价日 f005基石名称 f006基石背景(母公司) f008认购金额 f009认购股数 f010锁定期(月) f014基石占比% f015锁定期到期日(=上市日+锁定期,供解禁事件) f018/f019背景描述; 多行=每个基石一行; ⚠sfzx=1须配宽区间到今天"
+THS_DR,p05310,港股首发信息一览,ttype=1;sdate={start};edate={end};sfzx=1[;IFindKey={codes}],"ttype=1 港股IPO; sdate/edate=YYYYMMDD; sfzx=1 仅最新; 可选 IFindKey=代码1,代码2,... (含 _1 副牌可拉到完整池, 脚本里走 hk_universe.txt)",f001-f054 共 54 字段 (代码/公司/招股价/募资/超购倍数等),✓,20220101-20260507 不带 IFindKey 397 条; 带 hk_universe.txt 可含副牌,★关键字段(对照 Book1.xlsx): f010发行价 f013/f014发行股数预计/实际 f021超额配售绿鞋 f023募资总额 f025募资净额 f024发行费用 f027公开认购倍数(超购) f050基石占融资比例% f052国际认购倍数 f044基石配售股数 f034上市日 f028招股章程公告日 f031定价日 f053上市板; ⚠sfzx=1须配宽区间到今天否则-208; IFindKey清单从客户端板块成分入口生成
+THS_DataPool,block,板块成分股,{date};{block_id},date=YYYY-MM-DD; block_id 见 iFinD「板块成分入口」,"date,thscode,security_name",✓,18A (001005348) 拿到 3 只,"返回 OrderedDict, 用 result['errorcode'] 不是 .errorcode; 数据在 result['tables']"
+THS_BD,total_oi,总营业收入,港股:{year}-12-31; 美股:104 或 {report_date},"港股历史期只传日期; 美股 104=最新一期, 也可传明确报告日; 返回发行人原币",total_oi (单位: 发行人原币),✓,1187.HK 2024→29.83亿; NVDA.O 最新一期→816.15亿美元 / 2025-12-31→1304.97亿美元,"2026-06-15 已用 NVDA.O/MSFT.O/TSM.N/VRT.N 验证美股非空; 美股财年截止日可能不是12-31, 正式使用应确认报告期"
+THS_BD,gross_selling_rate,销售毛利率,"港股:{year}-12-31,104; 美股:104,100 或 {report_date},104","美股 104,100=最新一期; 明确报告日用 {date},104",gross_selling_rate (单位: %),✓,1187.HK 2024→50.58%; NVDA.O 最新一期→74.9335% / 2025-12-31→74.9887%,2026-06-15 已用 NVDA.O/MSFT.O/TSM.N/VRT.N 验证美股非空
+THS_BD,net_profit_margin_on_sales,销售净利率,"港股:{year}-12-31,104; 美股:104,100 或 {report_date},104","美股 104,100=最新一期; 明确报告日用 {date},104",net_profit_margin_on_sales (单位: %),✓,1187.HK 2024→10.47%; NVDA.O 最新一期→71.4587% / 2025-12-31→55.848%,2026-06-15 已用 NVDA.O/MSFT.O/TSM.N/VRT.N 验证美股非空
+THS_BD,ths_roe_hks,ROE (港股专用),"{year}-12-31,100",100=合并报表,ths_roe_hks (单位: %),✓,3690.HK 2024→22.06% / 2023→9.87%; 1187.HK 2025→7.69%,_hks 后缀是港股版; A股是 ths_roe_stock
+THS_BD,ni_attr_to_cs,归属于母公司股东的净利润,"{report_date},100,OC 或 104,100,OC","报告期, 报表类型(100合并/101母公司/102合并调整/103母公司调整), 货币(OC原币/CNY/USD/HKD); 104=最新一期",ni_attr_to_cs (单位: 指定货币),✓,3690.HK 2024→358.07亿; NVDA.O 最新一期→583.21亿美元 / 2025-12-31→728.80亿美元,iFinD 客户端「财务报表(海外市场)」分类; 2026-06-15 已用 NVDA.O/MSFT.O/TSM.N/VRT.N 验证美股非空
+THS_BD,ths_total_shares_after_ipo_ld_global,首发后总股本(上市日),(空),无参数; 同 currency_unit 串调用时第三参数填 ';',ths_total_shares_after_ipo_ld_global (单位: 股),✓,1187.HK 235.9M / 3690.HK 5.49B / 0700.HK 1.68B (IPO当时),"静态指标, 港股IPO上市日的总股本快照; 跟 currency_unit (=实际发行总股本) 配合可推上市前总股本"
+THS_BD,currency_unit,实际发行总股本 (含超额配售),(空),"无参数; 同上, 第三参数填 ';'","currency_unit ⚠ 列名误导, 实际是股数 (单位: 股)",✓,"1187.HK 27M / 0068.HK 群核 184.7M (>f013 160.6M, 超配行使)","iFinDPy 列名是 currency_unit 但数据是「实际发行总股本」, 含超额配售; 跟 p05310 f013(原计划发行)对比可看绿鞋是否行权"
+DERIVED,pre_ipo_shares,上市前总股本 (推算),post_ipo_shares - actual_issued_shares,首发后总股本 - 实际发行总股本 (含超配),pre_ipo_shares (单位: 股),✓,1187.HK 208.9M / 6810.HK 360M / 2476.HK 858.2M (含超配修正),脚本里 [5/6] 步骤自动算入 ifind_share_capital.csv; 用 actual_issued (含超配) 比 p05310 f013 更准
+THS_DR,p05493,港股增发信息一览,sdate={start};edate={end};datetype=1[;IFindKey={codes}],datetype=1 按公告日; sdate/edate=YYYYMMDD; IFindKey 同 p05310 (用 hk_universe.txt),f001-f031 + jydm_mc 共 32 字段; 关键: f001代码 f002简称 f003增发方式 f004状态 f005公告日 f006到账日 f007增发数量 f008占增发前股本比例 f009增发价 f010募资总额 f011募资净额 f013币种 f021/f023承销商,✓,"2025+ 港股配售/增发记录, 2565.HK 派格生物 5136000股@58.41 募资2.99亿","用于跟踪 IPO 后再融资稀释; ⚠ f008 是「增发前」(本次再融资前)股本, 不等于「上市前」股本"
+THS_BD,ths_stock_short_name_stock,股票简称,(空),无参数,ths_stock_short_name_stock (字符串),✓,3690.HK→美团-W; NVDA.O→英伟达; MSFT.O→微软; TSM.N→台积电,_stock 后缀对港股和美股均可用; 2026-06-15 验证 ｜[B] — [来源:DCF建模目录 category=meta verified=2026-05-08]
+THS_BD,ths_ipo_price_stock,首发价格,(空),无参数,ths_ipo_price_stock (单位: 港币),○,3690.HK → None (合法但拉不到),调用合法但港股大多 None; 港股 IPO 价用 p05310 的 f009 替代
+THS_BD,ths_revenue_stock,营业收入 (A股版),"{year}-12-31,100",,—,○,3690.HK / 0700.HK / 9988.HK 全 None,_stock 后缀对港股全 None; 港股用 total_oi 替代
+THS_BD,ths_np_stock,净利润 (A股版),"{year}-12-31,100",,—,○,港股全 None,港股用 net_profit_margin_on_sales 算或换其他指标
+THS_BD,ths_gpm_stock,毛利率 (A股版),—,,—,✗,err=-209 the params are invalid,指标名不存在; 港股用 gross_selling_rate
+THS_BD,ths_total_shares_before_ipo_stock,上市前总股本,—,,—,✗,err=-209,指标名不存在; 用 DERIVED pre_ipo_shares 代替 (后总股本 - 实际发行)
+THS_BD,ths_revenue_hks / ths_gross_profit_hks / ths_gross_margin_hks / ths_total_equity_hks,(_hks 营收/毛利/净资产),"{year}-12-31,100",,—,○,3690.HK 全 None,"_hks 后缀这套虽然合法但全 None, 不要再用"
+THS_HistoryQuotes,HSI.HK,恒生指数日线收盘,"(thscode, 'close', '', sdate, edate)","5 个位置参数; 第 3 参 jsonparam 可空字符串; sdate/edate=YYYY-MM-DD; ⚠ HSI.HI/HSCEI.HK/HSAHP.HK 全部 -4210, HSI.HK 才是恒生指数","time + close (OrderedDict, result['tables'][0]['table']['close'])",✓,2026-05-08 close=26626.28; 1 年 252 日序列拉到; 个股 0700.HK 同样可用,"返回 OrderedDict 不是带属性的对象, 取数路径 result['tables'][0]['table']['close']; 探针确认 HSCEI/HSAHP 在该接口不可用"
+THS_DR,p04275,港股通个股资金流向,type={1沪 / 2深};sdate={start};edate={end},"type=1 沪港通, type=2 深港通; sdate/edate=YYYY-MM-DD; 即使传日期范围也只返回截面 (~901 行)",f001 代码 / f002 名称 / f003 当日资金净流入(港元) / f004 净流入股数 / f005 涨跌幅 / f006 收盘价 / f007 累计净流入(上市以来) / f008 H 成交额 / f009 持股市值 / f010 持股占比 / f011 行业大类 / f012 行业小类,✓,2026-05-07 type=2 共 901 行; sum(f003)=683.66 亿港元 当日全市场南向净流入,"30 日累计需 daily 累积或循环 30 次调用; 字段是文本含 '--', 用 pd.to_numeric(..., errors='coerce') 转数"
+THS_DR,p03508,AH 股价格比对,date={YYYYMMDD},"date=单日 YYYYMMDD; 不支持范围, 一次返回当日全部 AH 对",jydm H 代码 / jydm_mc H 名 / f001 日期 / f002 H/A 比价 / f003 折/溢价标识 / f004 H 相对 A 溢价% (H 折价时为负) / f005 H 价(港币) / f008 H 成交额 / f009 A 代码 / f010 A 名 / f011 日期 / f012 A 价(人民币) / f013 A 涨跌 / f014 A 成交额 / f015/f016 行业,✓,2026-05-08 共 189 对 AH 股; 成交额加权 H_over_A = -30.29% (即 A_over_H = +30.29%),"用作 HSAHP 替代 (官方 HSAHP.* 代码 -4210); 想对齐 HSAHP 习惯需 f004 取反 (HSAHP 是 A 相对 H 溢价, 正数=A 贵); 60 日序列需 daily 累积"
+THS_EDB,S032219215,粤港澳大湾区跨境理财通南向(月度),"(id, '', sdate, edate)","5 个位置参数; sdate/edate=YYYY-MM-DD; 月度数据, 月末值",time / id / value / index_name / rtime (DataFrame),✓,2025-05~2026-03 共 11 行; 最近 2026-03 = 16.05 亿,"⚠ 是「跨境理财通南向」(大湾区居民买香港理财), 不是「港股通南向」(A 股投资者买港股); 港股通南向用 p04275"
+THS_HistoryQuotes,HSTECH.HK,恒生科技指数,"(thscode, 'close', '', sdate, edate)",同 HSI.HK; HSCEI.HK 反而失败,close 序列 (OrderedDict),✓,2026-05-08 close=5121.10,港股 AI/大模型/科技主题首选代理 (港股没有概念板块编码体系)
+THS_HistoryQuotes,HSCI.HK,恒生综合指数,"(thscode, 'close', '', sdate, edate)",同 HSI.HK,close 序列,✓,2026-05-08 close=4017.63,综合行情代理
+THS_HistoryQuotes,HSCIIT.HK,恒生综合-资讯科技业,"(thscode, 'close', '', sdate, edate)",同 HSI.HK; ⚠ HSCII.HK (少一个 T) 失败,close 序列,✓,2026-05-08 close=14993.60,恒生综合行业指数 (资讯科技业子集)
+THS_HistoryQuotes,930967.CSI,中证港股通信息技术综合,"(thscode, 'close', '', sdate, edate)",⚠ 中证指数后缀必须是 .CSI; 930967.SH/.HK/.IDX 全部 -4210,close 序列,✓,2026-05-08 close=5127.81,半导体/IT 主题代理 (港股通范围); 类似的有 931573.CSI 港股通科技 / 931574.CSI 港股通TMT / H30269.CSI 中证港股通TMT
+THS_WC,(query domain),i问财查询 (DataFrame 版),"(query, domain, format='format:dataframe')",同 iwencai; 通常 domain=news,DataFrame 1 行: 指数代码 / 指数简称 / 指数@新闻='查看明细',✗,只返回「查看明细」链接占位 (1 行 placeholder),"只能拿到指针 (查看链接), 不能直接拉文本; iFinD 不适合做新闻抓取"
+THS_WC,(query domain),i问财查询 (DataFrame 版),"(query, domain, format='format:dataframe')",同 iwencai; 通常 domain=news,DataFrame 1 行: 指数代码 / 指数简称 / 指数@新闻='查看明细',✗,只返回「查看明细」链接占位 (1 行 placeholder),"只能拿到指针 (查看链接), 不能直接拉文本; iFinD 不适合做新闻抓取"
+THS_iEvent,—,事件数据,"(name, paramname, FunOption, format='format:dataframe')",—,—,✗,err=-5100 'account type is not supported',账号权限不够; 跳过
+THS_DS,ths_fund_scale_fund,基金规模(资产净值/AUM),"(thscode, 'ths_fund_scale_fund', '', '', sdate, edate)","★ 6 个位置参数; 第3/4参(param/globalparam)填空字符串 ''; sdate/edate=YYYY-MM-DD; 返回带 .errorcode/.data 的对象, data 列含 time/thscode/ths_fund_scale_fund","time + thscode + ths_fund_scale_fund (单位: 基金本币, 美股ETF为美元)",✓,KWEB.P 67.4亿 / MCHI.O 64.0亿 / FXI.P 57.4亿 / CQQQ.P 31.5亿 (2026-05-27); 2018-01-02 起 2110 交易日全覆盖,"★美股ETF规模在基金库 THS_DS, 不在行情库 THS_HQ (THS_HQ 的 totalShares 对美股ETF全空, turnoverRatio=0 无法反推份额); 约 75% 交易日刷新(基本每日); 份额字段 ths_*_share_*_fund 试 20+ 命名全 -209 取不到, 但 shares=AUM/NAV 可反推; 配 THS_HQ netAssetValue 算 flow, 用 AUM(t)-AUM(t-1)*(1+nav_ret) 剥离市值波动比直接 AUM.diff() 更准 (跨库对齐有噪声, 个别日假flow, 4周滚动可抵消)"
+THS_HQ/DS/HistQuotes,(港股上市ETF 3033.HK/2800.HK),港股ETF行情(恒科/盈富),同各接口,—,—,✗,3033.HK(华夏恒生科技)/2800.HK(盈富) 在 THS_HQ(连朴素 close)/THS_DS(ths_fund_scale_fund)/THS_HistoryQuotes 三接口全部 -4210; 对照 HSTECH.HK 与 A股 159567.SZ 同接口正常,"★本账号对港股上市 ETF/基金证券无行情权限 (-4210, 非代码/字段问题); 港股个股(0700.HK 等)与 A股/美股 ETF 均正常, 仅港股 ETF 不可用; 替代: 恒生科技用 159567.SZ(同 HSTECH 指数), 恒指宽基用 A股 159920.SZ(华夏恒生ETF); 见 pull_data_and_run.py LOCAL_ETF_CODES"
+THS_DR,p04276,港股通个股资金流向-明细表(个股南向持股历史),"('p04276','type=4;sdate={start};edate={end};code={code}','p04276_f001:Y,...,f008:Y','format:dataframe')",★ type=4(南向合计)支持全区间2018+; type=1沪/2深 忽略sdate只返最近~21天; sdate/edate=YYYYMMDD; code 单只须逐只循环,"f001日期 / f002净买入额(港元,日频,可负) / f003净买入量(股) / f004累计买入成本 / f005累计买入金额 / f006持股数量 / f007持股市值 / f008占流通股市值%",✓,"0700.HK type=4 → 2061行 2018-01-02~今; 2026-05-21 持股10.66亿/11.69% 与 tushare hk_hold 完全一致; 9988从2024-09入通, 2533从2024-12","★个股南向历史唯一可用接口(THS_DS 对应字段试40+全-209; p04275/p04276 type≠4 仅当前截面或近21天且忽略日期); f002 是最干净日度净流入(f003=持股数日差 corr=1.0, 无市值波动); 全样本 56/71 有数据(次新18C股未入港股通); 按子样本聚合 f002 即 per-sub 主动资金流, 见 compute_subsample_southbound_flow"
+THS_HQ,VHSI.HK close,恒生波幅指数日线,"('VHSI.HK','close','Fill:Previous',sdate,edate)",sdate/edate=YYYY-MM-DD,time / thscode / close,✓,2018-01-02~2026-06-12 共2076行; 最新21.58,可作恒指期权隐含波动率水平代理; 不等同于skew或Put/Call
+THS_DS,ths_fore_np_mean_consensus_hks,港股一致预期净利润均值,"(codes,field,'{forecast_year},HKD','',sdate,edate)","第3参顺序=预测年度,币种; 日频历史; 可批量代码",time / thscode / ths_fore_np_mean_consensus_hks (港元),✓,0005/0939/1288/1398/2388/3968/3988及0700/9988/3690等可用至2026-06-12,用于银行相对科技盈利预测修正; 固定财年序列不宜直接做多年滚动因果检验
+THS_DR,p02512,港股个股卖空明细截面,"('p02512','date={YYYYMMDD};IFindKey={codes}','p02512_f004:Y,...,f009:Y','format:dataframe')",单日截面; IFindKey可批量代码,f004/f007为卖空占比类字段; f005/f006为绝对额/量; 具体标签存在偏移,✓,2026-06-12 科技样本56行; 占比列均值15.96%,适合构造固定样本卖空成交占比; 不是港交所全市场成交额加权口径
+THS_DS,monthly_revenue / monthly_revenue_yoy,台股月度营收/同比,"(code,field,'OC','',sdate,edate)",适用于台股; code示例2330.TW,time / thscode / indicator,○,2330.TW 2018+ 调用ec=0但指标列全空,字段名与代码合法; 本账户无有效台湾月营收覆盖，不能用于正式结论
+THS_DS,ths_option_total_amount_pcr_option / ths_option_total_volume_pcr_option / ths_option_total_oi_pcr_option,期权品种Put/Call比率,"(option_contract,field,'100','',sdate,edate)",输入必须是具体期权合约而非标的,time / thscode / indicator,○,SOXX.O/SMH.O/HSI.HK/HSTECH.HK直接调用均全空,Formula已由本机iFinD字典确认; 当前API未取得对应合约池
+THS_DS,ths_call_skew_option / ths_put_skew_option,期权认购/认沽偏斜,"(option_contract,field,'100','',sdate,edate)",100=未调整; 输入具体期权合约,time / thscode / indicator,○,标的代码调用ec=0但全空,需先取得同标的同到期月份的具体合约代码; 当前API合约池缺失
+REFERENCE,US_SYMBOL_SUFFIX,美股 iFinD 代码后缀,NASDAQ={ticker}.O; NYSE={ticker}.N; NYSE Arca ETF={ticker}.P; NYSE American={ticker}.A,必须按实际交易所选择后缀; 长桥 .US 不能直接传入 iFinD,iFinD thscode,✓,NVDA.O / MSFT.O / TSM.N / VRT.N / QQQ.O / SPY.P / IWM.P,2026-06-15 实测; 港股须四位数字如0700.HK
+THS_DataPool,block:161001001,美股主板股票池,"('block','{date};161001001','date:Y,thscode:Y,security_name:Y')",date=YYYY-MM-DD; 161001001=美股主板股票池,DATE / THSCODE / SECURITY_NAME,✓,2026-06-12 返回6205只; 样例 ZYME.O / ZWS.N,"001005 不是可直接用于 DataPool 的美股板块编码, 实测返回A股等非目标证券"
+THS_HQ,US_STOCK_DAILY,美股日线行情,"(codes,'preClose;open;high;low;close;avgPrice;change;changeRatio;volume;amount','Interval:D,CPS:1,Fill:Previous',sdate,edate)",codes可逗号批量; sdate/edate=YYYY-MM-DD; 当前账户 amount 对美股全空,time / thscode / preClose / open / high / low / close / avgPrice / change / changeRatio / volume / amount,✓,NVDA.O/MSFT.O/TSM.N/VRT.N 2026-06-01~06-14 共40行且价量字段全非空,"历史行情可用; amount 当前账户为空, 不应用其计算成交额"
+THS_RQ,US_STOCK_REALTIME,美股实时行情,"(codes,'open;high;low;latest;changeRatio;amount;volume;bid1;ask1','','format:dataframe')",需要单独开通美股实时行情权限,实时行情字段,○,NVDA.O/MSFT.O/TSM.N/VRT.N 返回 -4230: no permission for real-time US stock market quotes,接口和字段合法但当前账号无权限; 适配器 quote 会回退最近日线并标记 is_realtime=false
+THS_BD,ths_stock_code_stock,美股股票代码,(空),无参数,ths_stock_code_stock (字符串),✓,NVDA.O→NVDA / MSFT.O→MSFT / TSM.N→TSM / VRT.N→VRT,2026-06-15 四个样本均非空
+THS_DS,ths_pe_stock,美股历史市盈率序列,"(codes,'ths_pe_stock','101','Days:Alldays,Fill:Previous,Interval:D',sdate,edate)",codes可批量; sdate/edate=YYYY-MM-DD,time / thscode / ths_pe_stock,✓,NVDA.O/MSFT.O/TSM.N/VRT.N 2026-06-01~06-14 共56行且全非空,"用于估值历史分位; 周末会按 Fill:Previous 填充, 计算交易日分位前应去重/过滤非交易日"
+THS_BD,ths_pe_ttm_stock,市盈率 TTM(美股),"{date},100",date=YYYY-MM-DD,ths_pe_ttm_stock,✓,2026-06-12 NVDA.O 31.1102 / MSFT.O 23.1806 / TSM.N 36.5349,NVDA/MSFT/TSM/VRT 四样本均非空; 美股估值优先使用此字段并标注日期
+THS_DS,ths_pe_stock,美股历史市盈率序列,"(codes,'ths_pe_stock','101','Days:Alldays,Fill:Previous,Interval:D',sdate,edate)",codes可批量; sdate/edate=YYYY-MM-DD,time / thscode / ths_pe_stock,✓,NVDA.O/MSFT.O/TSM.N/VRT.N 2026-06-01~06-14 共56行且全非空,"用于估值历史分位; 周末会按 Fill:Previous 填充, 计算交易日分位前应去重/过滤非交易日"
+THS_BD,total_assets,总资产(美股),"104,100,OC 或 {report_date},100,OC",104=最新一期; 100=合并报表; OC=发行人原币,total_assets,✓,NVDA.O 最新一期2594.74亿美元 / MSFT.O 6942.28亿美元 / TSM.N 8.6609万亿新台币,2026-06-15 NVDA/MSFT/TSM/VRT 四样本均非空
+THS_BD,total_liab,总负债(美股),"104,100,OC 或 {report_date},100,OC",104=最新一期; 100=合并报表; OC=发行人原币,total_liab,✓,NVDA.O 最新一期640亿美元 / MSFT.O 2798.61亿美元 / TSM.N 2.7286万亿新台币,2026-06-15 NVDA/MSFT/TSM/VRT 四样本均非空
+THS_BD,total_equity,总权益(美股),"104,100,OC 或 {report_date},100,OC",104=最新一期; 100=合并报表; OC=发行人原币,total_equity,✓,NVDA.O 最新一期1954.74亿美元 / MSFT.O 4143.67亿美元 / TSM.N 5.9324万亿新台币,2026-06-15 NVDA/MSFT/TSM/VRT 四样本均非空
+THS_BD,ncf_from_oa,经营活动现金流净额(美股),"104,100,OC 或 {report_date},100,OC",104=最新一期; 100=合并报表; OC=发行人原币,ncf_from_oa,✓,NVDA.O 最新一期503.44亿美元 / MSFT.O 1274.94亿美元 / TSM.N 6989.76亿新台币,2026-06-15 NVDA/MSFT/TSM/VRT 四样本均非空
+THS_BD,total_shares,总股本(美股),"104,100,OC 或 {report_date},100,OC","104=最新一期; 返回股数, OC参数保留以匹配海外报表接口",total_shares (单位: 股),✓,NVDA.O 242亿股 / MSFT.O 74.284亿股 / TSM.N ADR 51.865亿股,可与同日期close近似计算市值; 注意回购、增发和ADR换算可能导致与实时市值有偏差 ｜[B] 单位元(=股); /1e8 = 亿股 [来源:DCF建模目录 category=share_struct verified=2026-05-08]
+THS_BD,ths_pb_stock / ths_ps_stock / ths_ps_ttm_stock / ths_roe_stock / ths_roa_stock / ths_market_value_stock,美股常见候选字段但当前不可用,date参数或报告期参数,调用合法不代表有数据; 必须检查非空率,对应指标列,○,NVDA/MSFT/TSM/VRT: PB/PS/ROE/ROA全空; ths_market_value_stock全为0,"不要用于正式结论; 市值可暂用 close*total_shares 近似, PB/PS/ROE/ROA需客户端生成器找到海外专用字段后再补"
+THS_DS,ths_fore_np_mean_consensus_uss / ths_fore_eps_mean_consensus_uss / ths_fore_oi_mean_consensus_uss,美股一致预期候选字段,"(codes,fields,'','','{start}','{end}')",候选命名按港股字段推测,无,✗,2026-06-15 返回 -209 the params are invalid,"字段名不存在; 不要重复尝试, 需从 iFinD 客户端数据接口生成器取得确切美股一致预期字段"
+THS_WC,usstock domain,美股问财域,"('英伟达 2026年预测净利润','usstock','format:dataframe')",当前版本会忽略公司条件并返回A股指数集合,DataFrame,✗,返回1333个A股指数而非英伟达数据,不可作为美股筛选或一致预期来源; 必须检查返回证券集合是否符合查询
+THS_BasicData,pe_ttm,市盈率(TTM),"YYYY-MM-DD,100",market=universal; unit=ratio,ratio,✓,1316.HK→16.06; 603596.SH→22.03,适用 A股+港股+美股 [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,ps_ttm,市销率(TTM),"YYYY-MM-DD,100",market=universal; unit=ratio,ratio,✓,1316.HK→0.36; 603596.SH→2.39,适用 A股+港股+美股 [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,pb_latest,市净率(最新),"YYYY-MM-DD,100",market=universal; unit=ratio,ratio,✓,1316.HK→0.78; 603596.SH→3.57,替代 pb_mrq / ths_pb_lf [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,roe_ttm,加权净资产收益率(TTM),"YYYY-MM-DD,100",market=universal; unit=percent,percent,✓,1316.HK→4.83; 603596.SH→16.22,直接返回百分数 [来源:DCF建模目录 category=profitability verified=2026-05-08]
+THS_BasicData,ev1_to_ebitda,EV/EBITDA(EV1口径),YYYY-MM-DD,market=universal; unit=ratio,ratio,✓,603596.SH→17.09; 002284.SZ→15.18,无 unit 后缀; 部分港股 None [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,ths_market_value_stock,A股总市值,"YYYY-MM-DD,100",market=A股; unit=元,元,✓,603596.SH→288.09 亿元,A股专用; H股用 market_value [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,market_value,港股总市值(原币),"YYYY-MM-DD,100",market=港股; unit=HKD元,HKD元,✓,1316.HK→110.83 亿(HKD),港股 universal; 折 CNY 需 FX [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,ths_market_value_hks,港股总市值(_hks 后缀),"YYYY-MM-DD,100",market=港股; unit=HKD元,HKD元,○,—,market_value 失败时回退 [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,ths_np_ttm_stock,A股归母净利TTM,空,market=A股; unit=元,元,○,—,无 params; 单位元 [来源:DCF建模目录 category=profitability verified=2026-05-08]
+THS_BasicData,ths_np_ttm_hks,港股归母净利TTM,空,market=港股; unit=HKD元,HKD元,○,—,无 params; 港股原币 [来源:DCF建模目录 category=profitability verified=2026-05-08]
+THS_BasicData,ths_np_atoopc_stock,归母净利(单期),"YYYYMMDD,OC",market=A股; unit=元,元,✓,"20251231,OC → FY25 归母",OC=合并报表; PC=母公司 [来源:DCF建模目录 category=profitability verified=2026-05-08]
+THS_BasicData,ths_close_price,日收盘价,YYYY-MM-DD,market=universal; unit=元,元,○,—,— [来源:DCF建模目录 category=price verified=2026-05-08]
+THS_RealtimeQuotes,latest,实时最新价,—,market=universal; unit=元,元,✓,"通过 realtime_quotes(ticker,'latest')",字段名作 indicator [来源:DCF建模目录 category=price verified=2026-05-08]
+THS_HistoryQuotes,USDCNH.FX,美元离岸人民币,begin/end YYYY-MM-DD,market=外汇; unit=汇率,汇率,✓,~7.10,history_quotes(close); options Currency:original [来源:DCF建模目录 category=fx verified=2026-05-08]
+THS_HistoryQuotes,USDHKD.FX,美元港币,begin/end YYYY-MM-DD,market=外汇; unit=汇率,汇率,✓,~7.78,USDCNH/USDHKD 推导 HKD→CNY [来源:DCF建模目录 category=fx verified=2026-05-08]
+THS_HistoryQuotes,HSI.HI,恒生指数,begin/end YYYY-MM-DD,market=港股; unit=点,点,○,—,benchmark for HK beta [来源:DCF建模目录 category=index verified=2026-05-08]
+THS_HistoryQuotes,HSCEI.HI,恒生中国企业指数,begin/end YYYY-MM-DD,market=港股; unit=点,点,○,—,— [来源:DCF建模目录 category=index verified=2026-05-08]
+THS_HistoryQuotes,HSTECH.HI,恒生科技,begin/end YYYY-MM-DD,market=港股; unit=点,点,○,—,— [来源:DCF建模目录 category=index verified=2026-05-08]
+THS_HistoryQuotes,000300.SH,沪深300,begin/end YYYY-MM-DD,market=A股; unit=点,点,○,—,benchmark for A-share beta regression [来源:DCF建模目录 category=index verified=2026-05-08]
+THS_BasicData,ths_oper_total_rev,营业总收入(单期),"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_oper_rev,营业收入(单期),"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_op_profit,营业利润(单期),"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_total_profit,利润总额,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_net_profit,净利润,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_np_atoopc,归母净利,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_total_assets,总资产,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_total_liab,总负债,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_total_se,股东权益合计,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_se_atoopc,归属母公司股东权益,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_cash_eqv_end_period,期末现金及等价物,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_oper_cash_flow,经营活动现金流量净额,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_invest_cash_flow,投资活动现金流量净额,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_finan_cash_flow,筹资活动现金流量净额,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_capex,资本性支出,"YYYYMMDD,100,OC",market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=financial verified=2026-05-08]
+THS_BasicData,ths_gross_profit_ttm,毛利TTM,空,market=通用; unit=元,元,○,—,— [来源:DCF建模目录 category=profitability verified=2026-05-08]
+THS_BasicData,ths_dividend_yield,股息率,YYYY-MM-DD,market=通用; unit=percent,percent,○,—,— [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,ths_pe_ttm,市盈率TTM(_ths_前缀版),YYYY-MM-DD,market=通用; unit=ratio,ratio,○,—,与 pe_ttm 等价 fallback [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,ths_pb_lf,市净率LF,YYYY-MM-DD,market=通用; unit=ratio,ratio,○,—,与 pb_latest 等价 fallback [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,ths_ps_ttm,市销率TTM,YYYY-MM-DD,market=通用; unit=ratio,ratio,○,—,与 ps_ttm 等价 fallback [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,ths_ev_ebitda,EV/EBITDA,YYYY-MM-DD,market=通用; unit=ratio,ratio,○,—,与 ev1_to_ebitda 等价 fallback [来源:DCF建模目录 category=valuation verified=2026-05-08]
+THS_BasicData,ths_ipo_date_stock,上市日期,空,market=通用; unit=日期,日期,○,—,— [来源:DCF建模目录 category=meta verified=2026-05-08]
+THS_BasicData,ths_ipo_price_hks,港股发行价,空,market=港股; unit=HKD,HKD,○,—,— [来源:DCF建模目录 category=ipo verified=2026-05-08]
+THS_BasicData,ths_ipo_pe_hks,港股发行PE,空,market=港股; unit=ratio,ratio,○,—,— [来源:DCF建模目录 category=ipo verified=2026-05-08]
+THS_BasicData,ths_total_share_after_ipo_hks,IPO后总股本,空,market=港股; unit=股,股,○,—,— [来源:DCF建模目录 category=ipo verified=2026-05-08]
+THS_BasicData,ths_ipo_amt_hks,港股募资总额,空,market=港股; unit=HKD元,HKD元,○,—,— [来源:DCF建模目录 category=ipo verified=2026-05-08]
+THS_BasicData,ths_subscript_times_hks,公开发售认购倍数,空,market=港股; unit=倍,倍,○,—,— [来源:DCF建模目录 category=ipo verified=2026-05-08]
+THS_BasicData,ths_intl_subscript_times_hks,国际配售认购倍数,空,market=港股; unit=倍,倍,○,—,— [来源:DCF建模目录 category=ipo verified=2026-05-08]
+THS_BasicData,ths_listing_recommend_hks,保荐人,空,market=港股; unit=文本,文本,○,—,— [来源:DCF建模目录 category=ipo verified=2026-05-08]
+THS_BasicData,ths_underwriter_hks,承销商/账簿管理人,空,market=港股; unit=文本,文本,○,—,— [来源:DCF建模目录 category=ipo verified=2026-05-08]
+THS_BasicData,ths_first_day_close_chg_hks,首日涨跌幅,空,market=港股; unit=percent,percent,○,—,— [来源:DCF建模目录 category=ipo verified=2026-05-08]

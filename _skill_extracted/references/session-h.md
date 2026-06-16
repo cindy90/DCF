@@ -200,6 +200,8 @@ Append checkpoint to `_model_log.md`.
 
 完整 CSV: `shared/ifind_indicator_catalog.csv`
 
+> **注（2026-06-16 起统一）**：该 CSV 已合并为**单一权威目录**（schema A：`api,indicator,cn_name,param_format,param_note,return_cols,status,sample,note`，共 105 行），权威源在 `股票挖掘skills/ifind_indicator_catalog.csv`，本处为 vendored 副本。原 schema-B 建模指标已并入，相关行 `note` 列带 `[来源:DCF建模目录]` 标记。下表为旧列名的示意子集，实际以 CSV 为准；重新生成见 hub 的 `tools/build_unified_ifind_catalog.py`。
+
 ### 估值类 (universal — A股/港股/美股皆可)
 | indicator_id | params | 单位 | 说明 |
 |---|---|---|---|
